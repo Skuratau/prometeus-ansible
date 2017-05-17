@@ -1,0 +1,57 @@
+---
+- name: Creates prometeus directory
+  file: path=/opt/prometheus/ state=directory
+
+- name: Download prometheus 
+  get_url:
+    url: https://github.com/prometheus/node_exporter/releases/download/v0.14.0/node_exporter-0.14.0.linux-amd64.tar.gz
+    dest: /opt/prometheus/
+
+- name: untar Prom mode exporter
+  shell: cd /opt/prometheus/ && tar -xvzf node_exporter-0.14.0.linux-amd64.tar.gz
+
+- name: Creates prometeus directory
+  file: path=/opt/prometheus/node_exporter-0.14.0.linux-amd64.tar.gz state=absent
+
+- template:
+    src: node_exporter.service.j2
+    dest: /etc/systemd/system/node_exporter.service
+    mode: 777
+
+- shell: echo 'OPTIONS=""' > /opt/prometheus/node_exporter
+
+- service:
+    name: node_exporter
+    state: restarted
+    enabled: yes
+
+- command: "/bin/hostname"
+  register: azure_hostname
+
+- debug:
+    var: azure_hostname
+
+- template:
+    src: node_in_grafana.j2
+    dest: /opt/prometheus/node_in_grafana.json
+
+- name: Creating dashboard
+  uri:
+      url: "http://{{ grafana_creds.url }}/api/dashboards/db/"
+      method: POST
+      user: "{{ grafana_creds.login }}"
+      password: "{{ grafana_creds.pass }}"
+      force_basic_auth: yes
+      body: "{{ lookup('template', './node_in_grafana.j2') }}"
+      body_format: json
+      HEADER_Content-Type: "application/json"
+
+- lineinfile:
+    dest: /var/server/conf/prometheus/prometheus.yml
+    insertafter: "#node_exporter_nodes"
+    line: "      - '{{azure_hostname.stdout}}:9100'"
+    state: present
+  delegate_to: "{{ prom_server }}"
+
+- shell: "cd /var/server/conf/ && docker-compose stop && docker-compose up -d"
+  delegate_to: "{{ prom_server }}"

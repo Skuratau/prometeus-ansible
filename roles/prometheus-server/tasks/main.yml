@@ -1,0 +1,55 @@
+---
+- name: Create file for prometeus server
+  file:
+    path: /var/server/conf/prometheus/data
+    state: directory
+
+- name: Create file for prometeus rules
+  file:
+    path: /var/server/conf/prometheus/rules
+    state: directory
+
+
+- template:
+    src: prometheus.yml.j2
+    dest: /var/server/conf/prometheus/prometheus.yml
+
+- template:
+    src: docker-compose.j2
+    dest: /var/server/conf/docker-compose.yml
+
+- copy:
+    src: "rules/{{ item }}"
+    dest: "/var/server/conf/prometheus/rules/{{ item }}"
+  with_items:
+     - container.rules
+     - host.rules
+     - target.rules
+
+- shell: "cd /var/server/conf && docker-compose up -d"
+
+- shell: "sleep 8"
+
+- name: Creating datasource
+  uri:
+      url: "http://{{ grafana_creds.url }}/api/datasources"
+      method: POST
+      user: "{{ grafana_creds.login }}"
+      password: "{{ grafana_creds.pass }}"
+      force_basic_auth: yes
+      body: "{{ lookup('template', './data_source.j2') }}"
+      body_format: json
+      HEADER_Content-Type: "application/json"
+
+
+- name: Creating dashboard
+  uri:
+      url: "http://{{ grafana_creds.url }}/api/dashboards/db/"
+      method: POST
+      user: "{{ grafana_creds.login }}"
+      password: "{{ grafana_creds.pass }}"
+      force_basic_auth: yes
+      body: "{{ lookup('template', './base_dashboard.j2') }}"
+      body_format: json
+      HEADER_Content-Type: "application/json"
+

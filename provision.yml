@@ -1,0 +1,7 @@
+- name: Provision Host
+  hosts: all
+  connection: ssh
+  roles:
+   - docker-install
+   - prometheus-server
+   - prometheus-node

@@ -1,0 +1,53 @@
+- name: Debian | Remove old Docker packages
+  apt:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+     - docker
+     - docker-engine
+
+- name: Debian | Update apt cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Debian | Install docker prerequisites
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - software-properties-common
+
+- apt_key:
+    id: 0EBFCD88
+    url: "https://download.docker.com/linux/ubuntu/gpg"
+    state: present
+
+- name: Debian | Install docker repo 
+  shell: 'add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable"'
+
+- name: Debian | Update apt cache
+  shell: "apt-get update -y"
+
+- name: Debian | Install docker-ce and pip
+  apt:    
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - docker-ce
+    - python-pip
+
+- name: Debian | Pip update 
+  pip:
+    name: "{{ item }}"
+    state:  latest
+  with_items:
+    - pip
+    - docker-compose
+
+- service:
+    name: docker
+    state: started

@@ -1,0 +1,47 @@
+- name: Redhat | Remove old Docker packages
+  yum:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+     - docker 
+     - docker-common
+     - container-selinux
+     - docker-selinux
+     - docker-engine
+
+
+- name: Redhat | install the latest version of yum-utils
+  yum:
+    name: yum-utils
+    state: latest
+    update_cache: yes
+
+- name: Redhat | Add repository
+  shell: "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo"
+
+- name: Redhat | Install epel-release
+  yum: 
+    name: epel-release
+    state: present
+
+
+- name: Redhat | Install docker, pip and pythin devel packages
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+     - docker-ce
+     - python-pip
+     - python-devel
+
+- name: Redhat | Upgrading pip and installing docker-compose
+  pip:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - pip
+    - docker-compose
+
+- service:
+    name: docker
+    state: started
