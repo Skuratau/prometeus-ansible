@@ -45,6 +45,7 @@
       body: "{{ lookup('template', './node_in_grafana.j2') }}"
       body_format: json
       HEADER_Content-Type: "application/json"
+  ignore_errors: yes
 
 - lineinfile:
     dest: /var/server/conf/prometheus/prometheus.yml

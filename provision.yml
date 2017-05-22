@@ -1,5 +1,14 @@
 - name: Provision Host
   hosts: all
+  become: true
+  vars:
+      prom_server: '51.140.78.112'
+      node_name_in_graf: 'localhost'
+      grafana_creds:
+          login: admin
+          pass: admin
+          url: localhost:3000
+
   connection: ssh
   roles:
    - docker-install
