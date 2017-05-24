@@ -1,5 +1,0 @@
----
-grafana_creds:
-  login: admin
-  pass: admin
-  url: localhost:3000
