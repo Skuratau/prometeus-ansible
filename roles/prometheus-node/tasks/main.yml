@@ -18,7 +18,8 @@
     dest: /etc/systemd/system/node_exporter.service
     mode: 777
 
-- shell: echo 'OPTIONS=""' > /opt/prometheus/node_exporter
+- shell: ln -s  /opt/prometheus/node_exporter-0.14.0.linux-amd64 node_exporter
+- shell: echo 'OPTIONS=""' > /opt/prometheus/node_exporter/env
 
 - service:
     name: node_exporter

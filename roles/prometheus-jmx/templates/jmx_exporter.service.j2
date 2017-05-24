@@ -1,0 +1,9 @@
+[Unit]
+Description=JMX Exporter
+
+[Service]
+User=root
+ExecStart=java -jar /opt/prometheus/jmx-exporter/jmx_prometheus_javaagent-0.9.jar 5556 /opt/prometheus/jmx-exporter/jmx_exporter_config.yml
+
+[Install]
+WantedBy=multi-user.target
