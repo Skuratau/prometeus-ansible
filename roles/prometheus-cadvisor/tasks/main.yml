@@ -1,23 +1,19 @@
-- name: Creates prometeus directory
-  file: path=/opt/prometheus/jmx-exporter/ state=directory
+- name: Creating dashboard
+  uri:
+      url: "http://{{ grafana_creds.url }}/api/dashboards/db/"
+      method: POST
+      user: "{{ grafana_creds.login }}"
+      password: "{{ grafana_creds.pass }}"
+      force_basic_auth: yes
+      body: "{{ lookup('template', './node_in_grafana.j2') }}"
+      body_format: json
+      HEADER_Content-Type: "application/json"
+  ignore_errors: yes
+  delegate_to: "localhost"
 
-- name: download jmx-exporter
-  get_url:
-    url: https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.9/jmx_prometheus_javaagent-0.9.jar
-    dest: /opt/prometheus/jmx-exporter/jmx_prometheus_javaagent-0.9.jar
-    mode: 0666
-
-- template:
-    src: jmx_exporter.service.j2
-    dest: /etc/systemd/system/jmx_exporter.service
-    mode: 777
-
-- template:
-    src: jmx_exporter_config.j2
-    dest: /opt/prometheus/jmx-exporter/jmx_exporter_config.yml
-    mode: 666
-
-- service:
-    name: jmx_exporter
-    state: restarted
-    enabled: yes
+- lineinfile:
+    dest: "/etc/prometheus/prometheus.yml"
+    insertafter: "#cadvisor_nodes"
+    line: "      - '{{azure_hostname.stdout}}/cadvisor'"
+    state: present
+  delegate_to: "{{ prom_server }}"
