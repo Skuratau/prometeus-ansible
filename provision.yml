@@ -2,7 +2,7 @@
   hosts: all
   become: true
   vars:
-      prom_server: '52.18.18.254'
+      prom_server: '52.212.50.198'
       node_name_in_graf: 'localhost'
       grafana_creds:
           login: admin
