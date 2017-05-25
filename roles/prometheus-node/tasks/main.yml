@@ -1,6 +1,6 @@
 ---
 - name: Creates prometeus directory
-  file: path=/opt/prometheus/ state=directory
+  file: path=/opt/prometheus/node_exporter state=directory
 
 - name: untar Prometheus node exporter
   unarchive:
