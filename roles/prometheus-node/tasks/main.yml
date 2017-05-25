@@ -2,21 +2,14 @@
 - name: Creates prometeus directory
   file: path=/opt/prometheus/ state=directory
 
-- name: Download prometheus 
-  get_url:
-    url: https://github.com/prometheus/node_exporter/releases/download/v0.14.0/node_exporter-0.14.0.linux-amd64.tar.gz
-    dest: /opt/prometheus/
-
 - name: untar Prometheus node exporter
   unarchive:
-    src: /opt/prometheus/node_exporter-0.14.0.linux-amd64.tar.gz
+    src: https://github.com/prometheus/node_exporter/releases/download/v0.14.0/node_exporter-0.14.0.linux-amd64.tar.gz
     dest: /opt/prometheus/node_exporter
+    remote_src: True
 
 - name: create  Prometheus node env file
   file: path=/opt/prometheus/node_exporter/env state=present
-
-- name: cleanup
-  file: path=/opt/prometheus/node_exporter-0.14.0.linux-amd64.tar.gz state=absent
 
 - template:
     src: node_exporter.service.j2
