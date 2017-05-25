@@ -6,18 +6,10 @@
     url: https://repo1.maven.org/maven2/io/prometheus/jmx/jmx_prometheus_javaagent/0.9/jmx_prometheus_javaagent-0.9.jar
     dest: /opt/prometheus/jmx-exporter/jmx_prometheus_javaagent-0.9.jar
     mode: 0666
+    owner: tomcat
 
 - template:
-    src: jmx_exporter.service.j2
-    dest: /etc/systemd/system/jmx_exporter.service
-    mode: 777
-
-- template:
-    src: jmx_exporter_config.j2
-    dest: /opt/prometheus/jmx-exporter/jmx_exporter_config.yml
+    src: tomcat.j2
+    dest: /opt/prometheus/jmx-exporter/tomcat.yml
     mode: 666
-
-- service:
-    name: jmx_exporter
-    state: restarted
-    enabled: yes
+    owner: tomcat
