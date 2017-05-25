@@ -26,3 +26,8 @@
       body_format: json
   ignore_errors: yes
   delegate_to: "localhost"
+
+
+
+#sum(rate(container_cpu_user_seconds_total{image!="", instance=azure_hostname:"8080"}[1m]) * 100  / count_scalar(node_cpu{mode="user", instance=azure_hostname:"9100" })) by (name)
+image!="",instance="cadvisor:8080",name!="", state="running"}) by (name)
