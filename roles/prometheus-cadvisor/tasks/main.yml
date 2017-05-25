@@ -5,7 +5,7 @@
       user: "{{ grafana_creds.login }}"
       password: "{{ grafana_creds.pass }}"
       force_basic_auth: yes
-      body: "{{ lookup('template', './node_in_grafana.j2') }}"
+      body: "{{ lookup('template', './docker_containers_in_grafana.j2') }}"
       body_format: json
       HEADER_Content-Type: "application/json"
   ignore_errors: yes
