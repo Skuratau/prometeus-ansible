@@ -9,7 +9,8 @@
     remote_src: True
 
 - name: create  Prometheus node env file
-  file: path=/opt/prometheus/node_exporter/env state=present
+  file: path=/opt/prometheus/node_exporter/env
+  state: touch
 
 - template:
     src: node_exporter.service.j2
