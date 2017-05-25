@@ -17,3 +17,12 @@
     line: "      - '{{azure_hostname.stdout}}/cadvisor'"
     state: present
   delegate_to: "{{ prom_server }}"
+
+- name: Prometheus server reload
+  uri:
+      url: "http://{{ prom_server }}:9090/-/reload"
+      method: POST
+      body: ""
+      body_format: json
+  ignore_errors: yes
+  delegate_to: "localhost"
