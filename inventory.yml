@@ -1,3 +1,4 @@
 [target]
 51.140.82.182 ansible_user=devops
 52.18.18.254 ansible_user=ubuntu
+52.212.50.198 ansible_user=ubuntu
