@@ -1,14 +1,11 @@
 ---
-- name: Create file for prometeus server
+- name: Create folders for prometeus server
   file:
-    path: /var/server/conf/prometheus/data
+    path: /var/server/conf/prometheus/{{item}}
     state: directory
-
-- name: Create file for prometeus rules
-  file:
-    path: /var/server/conf/prometheus/rules
-    state: directory
-
+  with_items:
+    - rules
+    - data
 
 - template:
     src: prometheus.yml.j2
