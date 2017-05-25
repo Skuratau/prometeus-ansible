@@ -31,6 +31,7 @@
     src: node_in_grafana.j2
     dest: /opt/prometheus/node_in_grafana.json
 
+
 - name: Creating dashboard
   uri:
       url: "http://{{ grafana_creds.url }}/api/dashboards/db/"
@@ -42,13 +43,21 @@
       body_format: json
       HEADER_Content-Type: "application/json"
   ignore_errors: yes
+  delegate_to: "localhost"
 
 - lineinfile:
-    dest: /var/server/conf/prometheus/prometheus.yml
+    dest: "/etc/prometheus/prometheus.yml"
     insertafter: "#node_exporter_nodes"
     line: "      - '{{azure_hostname.stdout}}:9100'"
     state: present
   delegate_to: "{{ prom_server }}"
 
-- shell: "cd /var/server/conf/ && docker-compose stop && docker-compose up -d"
-  delegate_to: "{{ prom_server }}"
+
+- name: Prometheus server reload 
+  uri:
+      url: "http://{{ prom_server }}:9090/-/reload"
+      method: POST
+      body: ""
+      body_format: json
+  ignore_errors: yes
+  delegate_to: "localhost"

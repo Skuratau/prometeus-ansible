@@ -232,7 +232,7 @@
           "tableColumn": "",
           "targets": [
             {
-              "expr": "machine_cpu_cores{instance=\"{{ azure_hostname.stdout }}:9100\"}",
+              "expr": "count(count(node_cpu{instance=\"{{ azure_hostname.stdout }}:9100\"}) without (mode)) without (cpu)",
               "format": "time_series",
               "intervalFactor": 2,
               "metric": "machine_cpu_cores",
@@ -476,7 +476,7 @@
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(node_filesystem_free{device=\"/dev/xvda1\",fstype=\"ext4\",instance=\"{{ azure_hostname.stdout }}:9100\",job=\"nodeexporter\",mountpoint=\"/\"})",
+              "expr": "sum(node_filesystem_free{device=\"/dev/sda1\",fstype=\"ext4\",instance=\"{{ azure_hostname.stdout }}:9100\",mountpoint=\"/\"})",
               "format": "time_series",
               "interval": "30s",
               "intervalFactor": 1,
