@@ -9,7 +9,8 @@
     remote_src: True
 
 - name: create  Prometheus node env file
-    file: path=/opt/prometheus/node_exporter/env
+  file:
+    path: /opt/prometheus/node_exporter/env
     state: touch
     mode: "u=rw,g=rw,o=rw"
 
@@ -22,7 +23,7 @@
     name: node_exporter
     state: restarted
     enabled: yes
-    
+
 
 - command: "/bin/hostname"
   register: azure_hostname
